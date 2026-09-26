@@ -10,7 +10,7 @@
  * - 支持只构建 DMG 或 ZIP（--dmg / --zip）
  *
  * 使用：
- * bun run scripts/dist.ts                          # 完整打包（双架构 + DMG + ZIP）
+ * bun run scripts/dist.ts                          # 当前宿主架构打包（DMG + ZIP）
  * bun run scripts/dist.ts --current-arch            # 只构建当前架构（快速）
  * bun run scripts/dist.ts --current-arch --verbose   # 当前架构 + 详细日志
  * bun run scripts/dist.ts --current-arch --dmg       # 当前架构 + 只构建 DMG
@@ -168,89 +168,45 @@ function main(): void {
   const results: StepResult[] = []
 
   // 打印配置信息
-  console.log(`\n${color.bgBlue}${color.bold} Proma 打包工具 ${color.reset}\n`)
+  console.log(`\n${color.bgBlue}${color.bold} 欧尼博平台打包工具 ${color.reset}\n`)
   console.log(`  ${color.bold}平台${color.reset}:     ${opts.platform}`)
-  console.log(`  ${color.bold}架构${color.reset}:     ${opts.currentArch ? arch + ' (仅当前)' : 'arm64 + x64'}`)
+  console.log(`  ${color.bold}架构${color.reset}:     ${arch + ' (仅当前宿主架构)'}`)
   console.log(`  ${color.bold}格式${color.reset}:     ${opts.targetFormat}`)
   console.log(`  ${color.bold}签名${color.reset}:     ${opts.noSign ? '跳过' : '启用'}`)
   console.log(`  ${color.bold}详细日志${color.reset}: ${opts.verbose ? '开启' : '关闭'}`)
   printSeparator()
 
-  const totalSteps = 8
+  const totalSteps = 12
   let step = 0
 
-  // ── 步骤 1: 准备与当前目标平台/架构匹配的 OfficeCLI ──
-  step++
-  printStepStart(step, totalSteps, '准备 OfficeCLI 资源')
-  results.push(
-    runStep('准备 OfficeCLI 资源', 'bun', ['run', 'prepare:officecli'], { verbose: opts.verbose })
-  )
-  printStepResult(results[results.length - 1])
-  if (!results[results.length - 1].success) return printSummary(results)
+  // 与标准 dist 入口保持同一构建链，包含 utility processes 和原生依赖准备。
+  const buildSteps = [
+    ['准备 OfficeCLI 资源', 'prepare:officecli'],
+    ['构建主进程', 'build:main'],
+    ['构建 Agent Runtime', 'build:agent-runtime'],
+    ['构建 Terminal Runtime', 'build:terminal-runtime'],
+    ['构建 Preload', 'build:preload'],
+    ['构建渲染进程', 'build:renderer'],
+    ['编译 proma CLI', 'build:cli'],
+    ['编译 macOS 原生 Helpers', 'build:native-helpers'],
+    ['复制资源文件', 'build:resources'],
+    ['同步运行时依赖', 'sync:runtime-deps'],
+    ['重建 node-pty', 'rebuild:node-pty'],
+  ] as const
+  for (const [name, script] of buildSteps) {
+    printStepStart(++step, totalSteps, name)
+    const result = runStep(name, 'bun', ['run', script], { verbose: opts.verbose })
+    results.push(result)
+    printStepResult(result)
+    if (!result.success) return printSummary(results)
+  }
 
-  // ── 步骤 2: 构建主进程 ──
-  step++
-  printStepStart(step, totalSteps, '构建主进程 (esbuild)')
-  results.push(
-    runStep('构建主进程', 'bun', ['run', 'build:main'], { verbose: opts.verbose })
-  )
-  printStepResult(results[results.length - 1])
-  if (!results[results.length - 1].success) return printSummary(results)
-
-  // ── 步骤 3: 构建 Preload ──
-  step++
-  printStepStart(step, totalSteps, '构建 Preload (esbuild)')
-  results.push(
-    runStep('构建 Preload', 'bun', ['run', 'build:preload'], { verbose: opts.verbose })
-  )
-  printStepResult(results[results.length - 1])
-  if (!results[results.length - 1].success) return printSummary(results)
-
-  // ── 步骤 4: 构建渲染进程 ──
-  step++
-  printStepStart(step, totalSteps, '构建渲染进程 (Vite)')
-  results.push(
-    runStep('构建渲染进程', 'bun', ['run', 'build:renderer'], { verbose: opts.verbose })
-  )
-  printStepResult(results[results.length - 1])
-  if (!results[results.length - 1].success) return printSummary(results)
-
-  // ── 步骤 5: 编译 proma CLI 二进制 ──
-  step++
-  printStepStart(step, totalSteps, '编译 proma CLI (bun --compile)')
-  results.push(
-    runStep('编译 proma CLI', 'bun', ['run', 'build:cli'], { verbose: opts.verbose })
-  )
-  printStepResult(results[results.length - 1])
-  if (!results[results.length - 1].success) return printSummary(results)
-
-  // ── 步骤 6: 编译 macOS 原生 helpers ──
-  step++
-  printStepStart(step, totalSteps, '编译 macOS 原生 Helpers')
-  results.push(
-    runStep('编译 macOS 原生 Helpers', 'bun', ['run', 'build:native-helpers'], { verbose: opts.verbose })
-  )
-  printStepResult(results[results.length - 1])
-  if (!results[results.length - 1].success) return printSummary(results)
-
-  // ── 步骤 7: 复制资源文件 ──
-  step++
-  printStepStart(step, totalSteps, '复制资源文件')
-  results.push(
-    runStep('复制资源文件', 'bun', ['run', 'build:resources'], { verbose: opts.verbose })
-  )
-  printStepResult(results[results.length - 1])
-
-  // ── 步骤 8: electron-builder 打包 ──
-  step++
-  printStepStart(step, totalSteps, 'Electron Builder 打包')
+  printStepStart(++step, totalSteps, 'Electron Builder 打包')
 
   const builderArgs = ['electron-builder', `--${opts.platform}`]
 
   // 只构建当前架构
-  if (opts.currentArch) {
-    builderArgs.push(`--${arch}`)
-  }
+  builderArgs.push(`--${arch}`)
 
   // 指定输出格式
   if (opts.targetFormat === 'dmg') {

@@ -8,11 +8,22 @@
 import { autoUpdater } from 'electron-updater'
 import { BrowserWindow, app } from 'electron'
 import { join } from 'node:path'
+import { existsSync } from 'node:fs'
 import type { UpdateStatus } from './updater-types'
 import { UPDATER_IPC_CHANNELS } from './updater-types'
 import { createIdleInstallScheduler } from './idle-install-scheduler'
 import { isNewerVersion } from './version'
 import { createUpdateCacheCleanup, getDefaultUpdaterBaseCacheDirectory, shouldDeferUpdateCacheCleanup } from './update-cache-cleanup'
+
+/**
+ * 更新源是否已配置（打包产物内存在 electron-updater 的 app-update.yml）。
+ * 企业内部分发不配置 publish，此时自动更新整体禁用，
+ * 渲染进程通过 updater IPC 是否注册来自动隐藏更新 UI。
+ */
+export function isUpdateFeedConfigured(): boolean {
+  if (!app.isPackaged) return false
+  return existsSync(join(process.resourcesPath, 'app-update.yml'))
+}
 
 /** 当前更新状态 */
 let currentStatus: UpdateStatus = { status: 'idle' }

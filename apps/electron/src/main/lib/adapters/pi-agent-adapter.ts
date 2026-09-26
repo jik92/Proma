@@ -937,7 +937,7 @@ function buildPromaProductToolDefinitions(sdk: PiSdk, canUseTool: PiAgentQueryOp
     sdk.defineTool({
       name: 'EnterPlanMode',
       label: '进入计划模式',
-      description: '进入 Proma 计划模式。进入后只能调研、整理计划；将完整计划写入会话 plan/ 目录，并等待用户批准后再执行写操作。',
+      description: '进入欧尼博平台计划模式。进入后只能调研、整理计划；将完整计划写入会话 plan/ 目录，并等待用户批准后再执行写操作。',
       promptSnippet: '进入计划模式，先调研，将完整计划写入 plan Markdown 文档，再等待用户确认。',
       parameters: Type.Object({
         reason: Type.Optional(Type.String({ description: '进入计划模式的原因。' })),
@@ -966,7 +966,7 @@ function buildPromaProductToolDefinitions(sdk: PiSdk, canUseTool: PiAgentQueryOp
     sdk.defineTool({
       name: 'AskUserQuestion',
       label: '询问用户',
-      description: '当需要用户选择、补充信息或确认偏好时调用，Proma 会展示可交互问答横幅。',
+      description: '当需要用户选择、补充信息或确认偏好时调用，欧尼博平台会展示可交互问答横幅。',
       promptSnippet: '向用户提出结构化问题并等待回答。',
       parameters: Type.Object({
         questions: Type.Array(Type.Object({

@@ -527,7 +527,7 @@ export function WorkspaceMemoryTab({ workspaceSlug, sessionId, search, embedded 
                 active={selected?.kind === 'agents'}
                 icon={<FileText size={14} />}
                 label="AGENTS.md"
-                meta="Proma 工作区项目指令"
+                meta="欧尼博平台工作区项目指令"
                 onClick={() => void openAgents(summary)}
                 onReveal={() => window.electronAPI.showItemInFolder(summary.agentsMd.path)}
               />

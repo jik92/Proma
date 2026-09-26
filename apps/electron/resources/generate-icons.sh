@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Proma Icon Generation Script
+# 欧尼博平台 Icon Generation Script
 # Generates all required icon formats from icon.svg
 # Requires: rsvg-convert (librsvg), iconutil (macOS), magick (ImageMagick)
 
@@ -9,7 +9,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "🎨 Generating Proma icons..."
+echo "🎨 Generating 欧尼博平台 icons..."
 
 # Check required tools
 if ! command -v rsvg-convert &> /dev/null; then

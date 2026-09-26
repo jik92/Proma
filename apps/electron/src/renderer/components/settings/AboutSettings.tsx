@@ -21,7 +21,6 @@ import { EnvironmentCheckCard } from '@/components/environment/EnvironmentCheckC
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { ReleaseNotesViewer } from './ReleaseNotesViewer'
-import { VersionHistory } from './VersionHistory'
 
 /** 从 package.json 构建时由 Vite define 注入 */
 declare const __APP_VERSION__: string
@@ -481,7 +480,7 @@ function ShellEnvironmentCard(): React.ReactElement | null {
 export function AboutSettings(): React.ReactElement {
   return (
     <SettingsSection
-      title="关于 Proma"
+      title="关于欧尼博平台"
       description="集成通用 AI Agent 的下一代人工智能软件"
     >
       <SettingsCard>
@@ -493,7 +492,7 @@ export function AboutSettings(): React.ReactElement {
         </SettingsRow>
         <SettingsRow
           label="开源协议"
-          description="社区版基于 AGPL-3.0 开源，商业授权请联系 erlichliu@gmail.com"
+          description="基于开源项目 Proma（AGPL-3.0）二次开发"
         >
           <a
             href="https://www.gnu.org/licenses/agpl-3.0.html"
@@ -504,23 +503,12 @@ export function AboutSettings(): React.ReactElement {
             AGPL-3.0
           </a>
         </SettingsRow>
-        <SettingsRow label="项目地址">
-          <a
-            href="https://github.com/proma-ai/Proma.git"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-primary hover:underline"
-          >
-            github.com/proma-ai/Proma
-          </a>
-        </SettingsRow>
       </SettingsCard>
 
       {/* 自动更新卡片（updater 不可用时不渲染） */}
       <UpdateCard />
 
-      {/* 版本历史 */}
-      <VersionHistory />
+
 
       {/* 环境检测卡片 */}
       <EnvironmentCard />

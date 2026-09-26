@@ -1,7 +1,7 @@
 {
   "name": "@proma/electron",
-  "version": "0.19.58",
-  "description": "Proma，为专业用户设计的 Agent",
+  "version": "0.21.1",
+  "description": "欧尼博平台，为专业用户设计的 Agent",
   "main": "dist/main.cjs",
   "author": {
     "name": "ErlichLiu",
@@ -183,6 +183,5 @@
   "build": {
     "extends": "electron-builder.yml"
   },
-  "proma": {},
-  "homepage": "https://github.com/proma-ai/Proma"
+  "proma": {}
 }

@@ -18,6 +18,17 @@ mock.module('electron', () => ({
     isPackaged: true,
     getPath: () => join(process.env.HOME ?? tempHome, 'Library', 'Application Support'),
   },
+  BrowserWindow: class {},
+  clipboard: {},
+  dialog: {},
+  nativeImage: { createFromPath: () => ({}) },
+  nativeTheme: {},
+  powerMonitor: {},
+  powerSaveBlocker: {},
+  screen: {},
+  shell: {
+    openExternal: async () => undefined,
+  },
   safeStorage: {
     isEncryptionAvailable: () => false,
     encryptString: (value: string) => Buffer.from(value),

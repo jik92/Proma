@@ -15,6 +15,7 @@ import { Pin, PinOff, Star, Settings, Plus, CirclePlus, Trash2, Pencil, PanelLef
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { ModeSwitcher } from './ModeSwitcher'
+import { PromaLogo } from '@/lib/model-logo'
 import { SearchDialog } from './SearchDialog'
 import { UserAvatar } from '@/components/chat/UserAvatar'
 import { activeViewAtom, agentSkillsTabAtom } from '@/atoms/active-view'
@@ -3440,6 +3441,11 @@ export function LeftSidebar({ width, noTransition }: LeftSidebarProps): React.Re
       {/* macOS 需要避开左上角红绿灯；边栏覆盖全局标题栏拖拽层，因此留白自身也要可拖拽。 */}
       <div className={cn('w-full flex-shrink-0 titlebar-drag-region', isMac ? 'h-[30px]' : 'h-1')} />
 
+      {/* 品牌行：LOGO + 产品名 */}
+      <div className="titlebar-drag-region mt-1.5 flex h-9 flex-shrink-0 select-none items-center gap-2.5 px-4">
+        <img src={PromaLogo} alt="欧尼博平台" draggable={false} className="size-6 rounded-[7px]" />
+        <span className="truncate text-[13px] font-semibold tracking-wide text-foreground/90">欧尼博平台</span>
+      </div>
       {/* 模式切换器 + 折叠按钮 */}
       <div className={cn('titlebar-drag-region flex items-start gap-1.5 px-3', isMac && 'pt-[5px]')}>
         <div className="flex-1 min-w-0">

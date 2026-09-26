@@ -52,7 +52,7 @@ export function MigrationSettings(): React.ReactElement {
     <div className="space-y-8">
       <SettingsSection
         title="迁移原理"
-        description="Proma 的本地数据通常存放在 .proma 文件夹。迁移时先压缩该文件夹，再在新设备上由 Proma 解压、分配项目路径并重建索引。"
+        description="欧尼博平台的本地数据通常存放在 .proma 文件夹。迁移时先压缩该文件夹，再在新设备上由欧尼博平台解压、分配项目路径并重建索引。"
       >
         <ol className="space-y-3 text-sm leading-6 text-muted-foreground">
           <li className="flex gap-3">
@@ -61,18 +61,18 @@ export function MigrationSettings(): React.ReactElement {
           </li>
           <li className="flex gap-3">
             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-foreground">2</span>
-            <span>将 ZIP 通过可信方式传输到新设备，并附到任意一个 Proma 对话中。</span>
+            <span>将 ZIP 通过可信方式传输到新设备，并附到任意一个欧尼博平台对话中。</span>
           </li>
           <li className="flex gap-3">
             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-foreground">3</span>
-            <span>新设备上的 Proma 解压数据、重新分配本地项目目录，并重建会话、工作区和文件索引。</span>
+            <span>新设备上的欧尼博平台解压数据、重新分配本地项目目录，并重建会话、工作区和文件索引。</span>
           </li>
         </ol>
       </SettingsSection>
 
       <SettingsSection
         title="当前设备：创建迁移压缩包"
-        description="先打开 Proma 数据文件夹；随后可将提示词粘贴到任意 Proma 对话，由 Agent 协助创建 ZIP。"
+        description="先打开欧尼博平台数据文件夹；随后可将提示词粘贴到任意欧尼博平台对话，由 Agent 协助创建 ZIP。"
       >
         <div className="flex flex-wrap gap-3">
           <button
@@ -93,8 +93,8 @@ export function MigrationSettings(): React.ReactElement {
       </SettingsSection>
 
       <SettingsSection
-        title="新设备：恢复 Proma 数据"
-        description="在新设备的任意 Proma 对话中附上 ZIP，再粘贴以下提示词完成解压、项目分配和索引重建。"
+        title="新设备：恢复欧尼博平台数据"
+        description="在新设备的任意欧尼博平台对话中附上 ZIP，再粘贴以下提示词完成解压、项目分配和索引重建。"
       >
         <div className="relative rounded-lg border border-border/60 bg-muted/30 p-4 pr-14">
           <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-6 text-muted-foreground">{RESTORE_MIGRATION_PROMPT}</pre>

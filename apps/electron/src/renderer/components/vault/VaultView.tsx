@@ -53,7 +53,7 @@ const VAULT_NAME = 'Vault'
 const VAULT_SIDEBAR_MIN_WIDTH = 180
 const VAULT_SIDEBAR_MAX_WIDTH = 520
 const PROMA_MANAGED_VAULT_DISPLAY_NAME = 'Proma Vault'
-const PROMA_SELF_MANAGED_VAULT_LABEL = 'Proma 自建 Vault'
+const PROMA_SELF_MANAGED_VAULT_LABEL = '欧尼博平台自建 Vault'
 const MAX_QUOTED_CHARS = 2000
 
 interface VaultTextSelection extends LiveMarkdownTextSelection {
@@ -890,7 +890,7 @@ export function VaultView({ embedded = false, sessionId }: { embedded?: boolean;
 
   const selectVaultManually = async (): Promise<void> => {
     if (!await flushCurrentEditor()) return
-    const selected = await window.electronAPI.selectVault({ inboxPath: 'Proma Inbox', allowAgentWrites: false })
+    const selected = await window.electronAPI.selectVault({ inboxPath: '欧尼博 Inbox', allowAgentWrites: false })
     if (!selected) return
     setConfig(selected)
     selectFile(null)
@@ -920,7 +920,7 @@ export function VaultView({ embedded = false, sessionId }: { embedded?: boolean;
     try {
       const selected = candidate.isPromaManaged
         ? await window.electronAPI.selectDefaultVault()
-        : await window.electronAPI.authorizeDiscoveredVault(candidate.path, { inboxPath: 'Proma Inbox', allowAgentWrites: false })
+        : await window.electronAPI.authorizeDiscoveredVault(candidate.path, { inboxPath: '欧尼博 Inbox', allowAgentWrites: false })
       setConfig(selected)
       selectFile(null)
       setReadResult(null)
@@ -1308,13 +1308,13 @@ export function VaultView({ embedded = false, sessionId }: { embedded?: boolean;
       <Dialog open={vaultHelpOpen} onOpenChange={setVaultHelpOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>在 Proma 中使用 {VAULT_NAME}</DialogTitle>
-            <DialogDescription>Proma 直接读写本机已授权的 Markdown Vault；这些笔记也会继续保留在 {VAULT_NAME} 中。</DialogDescription>
+            <DialogTitle>在欧尼博平台中使用 {VAULT_NAME}</DialogTitle>
+            <DialogDescription>欧尼博平台直接读写本机已授权的 Markdown Vault；这些笔记也会继续保留在 {VAULT_NAME} 中。</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 text-sm leading-6 text-muted-foreground">
             <section>
               <p className="font-medium text-foreground">切换与管理 Vault</p>
-              <p>点击左下角的 Vault 名称可切换已发现的本地 Vault，也可以创建 Proma Vault 或打开本地仓库。云端 Vault 需先同步或挂载到本机。</p>
+              <p>点击左下角的 Vault 名称可切换已发现的本地 Vault，也可以创建欧尼博平台 Vault 或打开本地仓库。云端 Vault 需先同步或挂载到本机。</p>
             </section>
             <section>
               <p className="font-medium text-foreground">浏览与新建笔记</p>

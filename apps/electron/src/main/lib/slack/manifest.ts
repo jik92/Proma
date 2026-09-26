@@ -7,7 +7,7 @@ export interface SlackManifestOptions {
 
 /** 生成可直接粘贴到 Slack「From an app manifest」流程的频道 Socket Mode Manifest。 */
 export function buildSlackManifest(options: SlackManifestOptions = {}): SlackAppManifestResult {
-  const botName = options.botName?.trim() || 'Proma'
+  const botName = options.botName?.trim() || '欧尼博'
   const manifest: Record<string, unknown> = {
     display_information: {
       name: botName,

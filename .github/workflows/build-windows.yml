@@ -1,0 +1,45 @@
+# 在原生 Windows Runner 生成安装包，避免从 macOS 复制原生依赖。
+name: Windows 安装包
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 安装目标平台依赖
+        run: bun install --frozen-lockfile
+
+      - name: 验证打包校验逻辑
+        run: bun test apps/electron/scripts/packaging-runtime-checks.test.ts
+
+      - name: 构建 Windows x64 安装包并验证 ASAR 内的 sharp
+        working-directory: apps/electron
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: bun run dist:win --x64 --publish never
+
+      - name: 上传安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-installer
+          path: apps/electron/out/*.exe
+          if-no-files-found: error

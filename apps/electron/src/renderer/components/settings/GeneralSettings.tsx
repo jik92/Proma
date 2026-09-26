@@ -6,8 +6,8 @@
  */
 
 import * as React from 'react'
-import { useAtom } from 'jotai'
-import { Camera, Check, ExternalLink, ImagePlus, Play, Volume2 } from 'lucide-react'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { Camera, Check, ExternalLink, ImagePlus, LogOut, Play, Volume2 } from 'lucide-react'
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
 import {
@@ -26,6 +26,8 @@ import {
 } from '../ui/select'
 import { UserAvatar } from '../chat/UserAvatar'
 import { userProfileAtom } from '@/atoms/user-profile'
+import { authGateAtom, authSessionAtom } from '@/atoms/auth'
+import { Button } from '@/components/ui/button'
 import {
   notificationsEnabledAtom,
   notificationSoundEnabledAtom,
@@ -187,6 +189,9 @@ export function GeneralSettings(): React.ReactElement {
 
   return (
     <div className="space-y-6">
+      {/* 登录账号区域 */}
+      <AccountSection />
+
       {/* 用户档案区域 */}
       <SettingsSection
         title="用户档案"
@@ -345,7 +350,7 @@ export function GeneralSettings(): React.ReactElement {
               <Volume2 className="mt-0.5 size-3.5 shrink-0" />
               <div className="min-w-0">
                 <p>音效与卡片插画来自 UI SFX，采用 CC0 公共领域许可。</p>
-                <p className="mt-0.5">Proma 非常喜欢这个音效库，并特别还原了一部分 UI SFX 的设计风格，推荐大家访问和使用他们的产品。</p>
+                <p className="mt-0.5">欧尼博平台非常喜欢这个音效库，并特别还原了一部分 UI SFX 的设计风格，推荐大家访问和使用他们的产品。</p>
               </div>
             </div>
             <a
@@ -425,7 +430,7 @@ export function GeneralSettings(): React.ReactElement {
           )}
           <SettingsToggle
             label="Git/PR 标识"
-            description="Agent 代你提交 commit 或创建 PR 时，附加 Made-with: Proma 与官网链接，便于推广；可随时关闭"
+            description="Agent 代你提交 commit 或创建 PR 时，附加 Made-with: 欧尼博平台与官网链接，便于推广；可随时关闭"
             checked={gitAttributionEnabled}
             onCheckedChange={(checked) => {
               void handleGitAttributionChange(checked)
@@ -435,6 +440,53 @@ export function GeneralSettings(): React.ReactElement {
       </SettingsSection>
 
     </div>
+  )
+}
+
+/**
+ * 登录账号区块：展示当前登录用户并提供登出。
+ * 登出后 App 门禁回到登录页。
+ */
+function AccountSection(): React.ReactElement | null {
+  const session = useAtomValue(authSessionAtom)
+  const setAuthGate = useSetAtom(authGateAtom)
+  const [loggingOut, setLoggingOut] = React.useState(false)
+
+  if (!session) return null
+
+  const handleLogout = async (): Promise<void> => {
+    setLoggingOut(true)
+    try {
+      await window.electronAPI.authLogout()
+      setAuthGate({ status: 'logged-out' })
+    } catch (error) {
+      console.error('[账号] 登出失败:', error)
+    } finally {
+      setLoggingOut(false)
+    }
+  }
+
+  return (
+    <SettingsSection
+      title="登录账号"
+      description="欧尼博平台企业账号（moment-factory-platform）"
+    >
+      <SettingsCard>
+        <SettingsRow
+          label={session.user.fullName ?? session.user.sub}
+          description={[
+            session.user.mobileNo,
+            session.user.roleName,
+            session.user.tenantName,
+          ].filter(Boolean).join(' · ')}
+        >
+          <Button size="sm" variant="outline" onClick={handleLogout} disabled={loggingOut}>
+            <LogOut size={14} />
+            {loggingOut ? '登出中…' : '退出登录'}
+          </Button>
+        </SettingsRow>
+      </SettingsCard>
+    </SettingsSection>
   )
 }
 

@@ -11,7 +11,8 @@ import { realpath, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { createHash } from 'node:crypto'
 import { IPC_CHANNELS, CHANNEL_IPC_CHANNELS, CHAT_IPC_CHANNELS, AGENT_IPC_CHANNELS, AGENT_ISLAND_IPC_CHANNELS, ENVIRONMENT_IPC_CHANNELS, INSTALLER_IPC_CHANNELS, PROXY_IPC_CHANNELS, GITHUB_RELEASE_IPC_CHANNELS, SYSTEM_PROMPT_IPC_CHANNELS, CHAT_TOOL_IPC_CHANNELS, FEISHU_IPC_CHANNELS, DINGTALK_IPC_CHANNELS, SLACK_IPC_CHANNELS, WECHAT_IPC_CHANNELS, AUTOMATION_IPC_CHANNELS, PLANNING_IPC_CHANNELS, VAULT_IPC_CHANNELS, PLANNING_CONFLICT_ERROR, MAX_ATTACHMENT_SIZE, isPromaPermissionMode, normalizePathForCompare, removeMcpServerFromConfig, TERMINAL_IPC_CHANNELS } from '@proma/shared'
-import { USER_PROFILE_IPC_CHANNELS, SETTINGS_IPC_CHANNELS, SCRATCH_PAD_IPC_CHANNELS, QUICK_TASK_IPC_CHANNELS, VOICE_DICTATION_IPC_CHANNELS, APP_ICON_IPC_CHANNELS, DOCK_BADGE_IPC_CHANNELS, STORAGE_IPC_CHANNELS, WINDOWS_AGENT_ISLAND_IPC_CHANNELS, TRAY_IPC_CHANNELS } from '../types'
+import { USER_PROFILE_IPC_CHANNELS, SETTINGS_IPC_CHANNELS, SCRATCH_PAD_IPC_CHANNELS, QUICK_TASK_IPC_CHANNELS, VOICE_DICTATION_IPC_CHANNELS, APP_ICON_IPC_CHANNELS, DOCK_BADGE_IPC_CHANNELS, STORAGE_IPC_CHANNELS, WINDOWS_AGENT_ISLAND_IPC_CHANNELS, TRAY_IPC_CHANNELS, AUTH_IPC_CHANNELS } from '../types'
+import type { AuthLoginResult, AuthGateStatus } from '../types'
 import type {
   QuickTaskSubmitInput,
   VoiceDictationAudioChunkInput,
@@ -222,6 +223,7 @@ import {
 import { extractTextFromAttachment } from './lib/document-parser'
 import { getUserProfile, updateUserProfile } from './lib/user-profile-service'
 import { getSettings, updateSettings } from './lib/settings-service'
+import { login, logout, getAuthState } from './lib/auth-service'
 import { refreshAgentIslandConfiguration, markAgentIslandSessionViewed } from './lib/agent-island-service'
 import { getAgentStatusHoverWindow } from './agent-status-hover-window'
 import { setDockBadgeCount } from './lib/dock-badge-service'
@@ -2174,6 +2176,32 @@ export function registerIpcHandlers(): void {
     CHAT_IPC_CHANNELS.EXTRACT_ATTACHMENT_TEXT,
     async (_, localPath: string): Promise<string> => {
       return extractTextFromAttachment(localPath)
+    }
+  )
+
+  // ===== 登录门禁相关 =====
+
+  // 登录（密码授权）
+  ipcMain.handle(
+    AUTH_IPC_CHANNELS.LOGIN,
+    async (): Promise<AuthLoginResult> => {
+      return login()
+    }
+  )
+
+  // 获取门禁状态（启动校验）
+  ipcMain.handle(
+    AUTH_IPC_CHANNELS.GET_STATE,
+    async (): Promise<AuthGateStatus> => {
+      return getAuthState()
+    }
+  )
+
+  // 登出
+  ipcMain.handle(
+    AUTH_IPC_CHANNELS.LOGOUT,
+    async (): Promise<void> => {
+      await logout()
     }
   )
 
@@ -5662,7 +5690,7 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('migration:open-data-folder', async (): Promise<void> => {
     const dataDir = getConfigDir()
     const error = await shell.openPath(dataDir)
-    if (error) throw new Error(`无法打开 Proma 数据文件夹：${error}`)
+    if (error) throw new Error(`无法打开欧尼博平台数据文件夹：${error}`)
   })
 
   // ===== 窗口控制（Windows 自定义标题栏按钮）=====

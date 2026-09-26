@@ -363,11 +363,11 @@ function FeishuCliSection(): React.ReactElement {
   return (
     <SettingsSection
       title="配置飞书 CLI"
-      description="飞书官方开源的命令行工具，配置后 Proma Agent 将可以直接读消息、查日历、写文档、建多维表格、发邮件，把任务真正落到飞书里完成。"
+      description="飞书官方开源的命令行工具，配置后欧尼博平台 Agent 将可以直接读消息、查日历、写文档、建多维表格、发邮件，把任务真正落到飞书里完成。"
     >
       <SettingsCard divided={false}>
         <div className="px-4 py-4 space-y-2 text-sm text-muted-foreground">
-          <p className="text-xs">复制配置提示词，并前往飞书Bot日常绑定的<strong>项目</strong>，创建新的 Proma Agent 对话并发送即可让 Proma 协助完成配置。</p>
+          <p className="text-xs">复制配置提示词，并前往飞书Bot日常绑定的<strong>项目</strong>，创建新的欧尼博平台 Agent 对话并发送即可让欧尼博平台协助完成配置。</p>
           <button
             type="button"
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -381,9 +381,9 @@ function FeishuCliSection(): React.ReactElement {
             <div className="bg-muted/50 rounded-md p-3 font-mono text-xs space-y-1.5 animate-in fade-in-0 slide-in-from-top-1 duration-200">
               <div><span className="text-foreground/70 font-semibold">步骤 1</span> — 安装飞书 CLI 到全局</div>
               <div className="pl-3 text-foreground/60">npm install -g @larksuite/cli</div>
-              <div className="pt-1"><span className="text-foreground/70 font-semibold">步骤 2</span> — 下载并安装到当前项目的 Proma 工作区 Skills 目录</div>
+              <div className="pt-1"><span className="text-foreground/70 font-semibold">步骤 2</span> — 下载并安装到当前项目的欧尼博平台工作区 Skills 目录</div>
               <div className="pl-3 text-foreground/60">npx skills add https://github.com/larksuite/cli -y</div>
-              <div className="pt-1"><span className="text-foreground/70 font-semibold">步骤 3</span> — 初始化 CLI（新建独立 CLI 应用，不影响 Proma 飞书 Bot）</div>
+              <div className="pt-1"><span className="text-foreground/70 font-semibold">步骤 3</span> — 初始化 CLI（新建独立 CLI 应用，不影响欧尼博平台飞书 Bot）</div>
               <div className="pl-3 text-foreground/60">lark-cli config init --new</div>
               <div className="pt-1"><span className="text-foreground/70 font-semibold">步骤 4</span> — 一键申请全部领域权限（文档/表格/日历/任务/邮件/通讯录/会议等）</div>
               <div className="pl-3 text-foreground/60">lark-cli auth login --domain all</div>
@@ -863,7 +863,7 @@ function CliRecommendationCard(): React.ReactElement {
       <div className="flex items-start gap-2">
         <div className="flex-1 text-xs text-foreground/80 leading-relaxed">
           <div className="font-medium text-foreground mb-0.5">想要更完整的飞书生态体验？</div>
-          补全飞书 CLI 后 Proma Agent 还可以直接读写你的文档、查日历、发邮件等。
+          补全飞书 CLI 后欧尼博平台 Agent 还可以直接读写你的文档、查日历、发邮件等。
           复制下方提示词到任意项目的新对话发送即可，Agent 会全程引导完成。
         </div>
       </div>
@@ -1116,7 +1116,7 @@ function SessionMirrorSection({ bots }: { bots: FeishuBotConfig[] }): React.Reac
   return (
     <SettingsSection
       title="同步到飞书"
-      description="开启后，每个新的 Proma Agent Session 会创建一个仅包含你和指定 Bot 的飞书群，并把输出同步到群内卡片，同时默认阻止电脑自动休眠，方便你脱离电脑在飞书上继续完成工作。"
+      description="开启后，每个新的欧尼博平台 Agent Session 会创建一个仅包含你和指定 Bot 的飞书群，并把输出同步到群内卡片，同时默认阻止电脑自动休眠，方便你脱离电脑在飞书上继续完成工作。"
     >
       <SettingsCard divided={false}>
         <div className="px-4 py-4 space-y-4">
@@ -1681,7 +1681,7 @@ function FeishuConfigTab(): React.ReactElement {
                     <li>
                       添加回调{' '}
                       <code className="bg-muted/50 px-1.5 py-0.5 rounded text-xs text-foreground/80">card.action.trigger</code>
-                      {' '}（卡片按钮回调，Proma 的流式卡片交互依赖此项）
+                      {' '}（卡片按钮回调，欧尼博平台的流式卡片交互依赖此项）
                     </li>
                   </ol>
                 </div>
@@ -1705,7 +1705,7 @@ function FeishuConfigTab(): React.ReactElement {
             {/* 提示 */}
             <div className="pl-7 p-3 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs">
               版本审核通过并发布后，在飞书中搜索机器人名称添加到聊天，
-              即可通过飞书向 Proma Agent 发送指令。
+              即可通过飞书向欧尼博平台 Agent 发送指令。
             </div>
           </div>
         </SettingsCard>

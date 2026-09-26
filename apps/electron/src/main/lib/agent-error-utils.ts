@@ -19,7 +19,7 @@ import { TRANSIENT_NETWORK_PATTERN, isMalformedResponseError } from './error-pat
 const FRIENDLY_ERROR_MESSAGES: Array<{ pattern: RegExp; message: string }> = [
   {
     pattern: /not logged in|please run \/login/i,
-    message: '请检查是否选择了正确的 Proma 供应渠道和模型',
+    message: '请检查是否选择了正确的欧尼博平台供应渠道和模型',
   },
   {
     pattern: /validation error/i,

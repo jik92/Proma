@@ -64,7 +64,7 @@ import pkg from '../../../package.json' with { type: 'json' }
 
 /** 当前配置版本 */
 const CONFIG_VERSION = 7
-const RETIRED_VOLCENGINE_PROVIDERS = new Set<ProviderType>(['doubao', 'ark-coding-plan'])
+const RETIRED_VOLCENGINE_PROVIDERS = new Set<string>(['doubao', 'ark-coding-plan'])
 const RETIRED_OPENCODE_PROVIDER = 'opencode-go-openai'
 const RETIRED_OPENCODE_MESSAGE = 'OpenCode Go 渠道已停止支持，请选择其他供应商或自定义渠道'
 
@@ -81,6 +81,13 @@ const DEEPSEEK_PRESET_MODELS: ChannelModel[] = [
   { id: 'deepseek-v4-flash', name: 'DeepSeek V4 Flash', enabled: true },
   { id: 'deepseek-flash', name: 'DeepSeek Flash', enabled: true },
   { id: 'deepseek-v4-flash-vision-exp', name: 'DeepSeek V4 Flash Vision Exp', enabled: true },
+]
+/** 欧尼博平台内置 LLM 网关：OpenAI Chat Completions 兼容，开箱即用默认渠道。 */
+const OUNIBO_CHANNEL_NAME = '欧尼博 AI'
+const OUNIBO_LLM_BASE_URL = 'https://llm.ounirobot.com/v1/chat/completions'
+const OUNIBO_LLM_API_KEY = '89f015591a03d3ce621e30f09b9bb07610fe7e6996d20f19b7addf07bcc01745'
+const OUNIBO_PRESET_MODELS: ChannelModel[] = [
+  { id: 'GLM-5.3-Flash', name: 'GLM-5.3-Flash', enabled: true },
 ]
 const KIMI_PRESET_MODELS: ChannelModel[] = [
   { id: 'kimi-k3', name: 'Kimi K3', enabled: true },
@@ -507,18 +514,19 @@ function decryptKey(encryptedKey: string): string {
  * 获取所有渠道
  *
  * 返回的渠道中 apiKey 保持加密状态。
- * 首次调用时，如果没有任何 DeepSeek 渠道，自动创建预设渠道。
+ * 首次调用时，自动补齐预设渠道：DeepSeek（未启用）与欧尼博内置渠道（开箱即用）。
  */
 export function listChannels(): Channel[] {
   const config = readConfig()
+  let changed = false
+  const now = Date.now()
 
   // 首次使用：如果没有 DeepSeek 渠道，自动创建预设
   const hasDeepSeek = config.channels.some(
     (c) => c.provider === 'deepseek' || c.baseUrl.includes('api.deepseek.com'),
   )
   if (!hasDeepSeek) {
-    const now = Date.now()
-    const presetChannel: Channel = {
+    config.channels.push({
       id: randomUUID(),
       name: 'DeepSeek',
       provider: 'deepseek',
@@ -528,13 +536,30 @@ export function listChannels(): Channel[] {
       enabled: false,
       createdAt: now,
       updatedAt: now,
-    }
-    config.channels.push(presetChannel)
-    writeConfig(config)
+    })
+    changed = true
     console.log('[渠道管理] 已自动创建 DeepSeek 预设渠道')
-    return config.channels
   }
 
+  // 开箱即用：没有欧尼博内置渠道时自动创建（含内置密钥，用户可编辑或删除）
+  const hasOunibo = config.channels.some((c) => c.baseUrl.includes('llm.ounirobot.com'))
+  if (!hasOunibo) {
+    config.channels.push({
+      id: randomUUID(),
+      name: OUNIBO_CHANNEL_NAME,
+      provider: 'custom',
+      baseUrl: OUNIBO_LLM_BASE_URL,
+      apiKey: encryptApiKey(OUNIBO_LLM_API_KEY),
+      models: cloneModels(OUNIBO_PRESET_MODELS),
+      enabled: true,
+      createdAt: now,
+      updatedAt: now,
+    })
+    changed = true
+    console.log('[渠道管理] 已自动创建欧尼博内置渠道（开箱即用）')
+  }
+
+  if (changed) writeConfig(config)
   return config.channels
 }
 
@@ -911,7 +936,7 @@ export async function testChannel(channelId: string): Promise<ChannelTestResult>
       case 'google':
         return await testGoogle(channel.baseUrl, apiKey, proxyUrl)
       default:
-        return { success: false, message: `不支持的供应商: ${provider}。你可能过去使用的是 Proma 商业版，请重新下载商业版覆盖安装，当前版本为开源版本。` }
+        return { success: false, message: `不支持的供应商: ${provider}。` }
     }
   } catch (error) {
     return normalizeRequestError(error)

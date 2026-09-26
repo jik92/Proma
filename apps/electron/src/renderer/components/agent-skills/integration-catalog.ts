@@ -318,7 +318,7 @@ export const MCP_INTEGRATION_CATALOG: CatalogIntegration[] = [
     credential: {
       label: 'Exa API Key',
       placeholder: '粘贴 Exa API Key',
-      helpText: '仅需填写 API Key。Proma 会加密保存到系统 Keychain，并通过 x-api-key 请求头连接 Exa 官方远程 MCP。',
+      helpText: '仅需填写 API Key。欧尼博平台会加密保存到系统 Keychain，并通过 x-api-key 请求头连接 Exa 官方远程 MCP。',
       acquisitionUrl: 'https://dashboard.exa.ai/api-keys',
       acquisitionLabel: '打开 Exa API Console',
       headerName: 'x-api-key',
@@ -335,7 +335,7 @@ export const MCP_INTEGRATION_CATALOG: CatalogIntegration[] = [
     credential: {
       label: 'Brave Search API Key',
       placeholder: '粘贴 Brave Search API Key',
-      helpText: '仅需填写 API Key。Proma 会加密保存到系统 Keychain，并仅在启动 Brave MCP 时作为 BRAVE_API_KEY 注入。',
+      helpText: '仅需填写 API Key。欧尼博平台会加密保存到系统 Keychain，并仅在启动 Brave MCP 时作为 BRAVE_API_KEY 注入。',
       acquisitionUrl: 'https://api-dashboard.search.brave.com/app/keys',
       acquisitionLabel: '打开 Brave Search API Console',
       headerName: '',
@@ -353,7 +353,7 @@ export const MCP_INTEGRATION_CATALOG: CatalogIntegration[] = [
     credential: {
       label: 'Tavily API Key',
       placeholder: '粘贴 Tavily API Key',
-      helpText: '仅需填写 API Key。Proma 会加密保存到系统 Keychain，并通过 Authorization 请求头连接 Tavily 官方远程 MCP。',
+      helpText: '仅需填写 API Key。欧尼博平台会加密保存到系统 Keychain，并通过 Authorization 请求头连接 Tavily 官方远程 MCP。',
       acquisitionUrl: 'https://app.tavily.com/home',
       acquisitionLabel: '打开 Tavily API Console',
       headerName: 'Authorization',
@@ -371,7 +371,7 @@ export const MCP_INTEGRATION_CATALOG: CatalogIntegration[] = [
     credential: {
       label: 'MCP Token',
       placeholder: '粘贴当前腾讯文档空间的 MCP Token',
-      helpText: '在当前空间右上角「≡ → 使用 MCP → 获取 MCP token」复制。Proma 将原样作为 Authorization 请求头保存到系统 Keychain，不会添加 Bearer 前缀。',
+      helpText: '在当前空间右上角「≡ → 使用 MCP → 获取 MCP token」复制。欧尼博平台将原样作为 Authorization 请求头保存到系统 Keychain，不会添加 Bearer 前缀。',
       acquisitionUrl: 'https://docs.qq.com/open/document/mcp/get-token',
       acquisitionLabel: '打开腾讯文档官方 Token 获取说明',
       headerName: 'Authorization',

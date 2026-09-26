@@ -112,7 +112,7 @@ export const BUILTIN_DEFAULT_PROMPT_STRING = `你首先是某个大模型，这�
 /** Proma 内置默认提示词 */
 export const BUILTIN_DEFAULT_PROMPT: SystemPrompt = {
   id: BUILTIN_DEFAULT_ID,
-  name: 'Proma 内置提示词',
+  name: '欧尼博平台内置提示词',
   content: BUILTIN_DEFAULT_PROMPT_STRING,
   isBuiltin: true,
   createdAt: 0,

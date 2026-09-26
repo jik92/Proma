@@ -12,10 +12,15 @@ import {
   checkForUpdates,
   getUpdateStatus,
   installWhenIdle,
+  isUpdateFeedConfigured,
 } from './auto-updater'
 
-/** 注册更新 IPC 处理器 */
+/** 注册更新 IPC 处理器（更新源未配置时跳过，渲染进程会隐藏更新 UI） */
 export function registerUpdaterIpc(): void {
+  if (!isUpdateFeedConfigured()) {
+    console.log('[更新 IPC] 未配置更新源，跳过更新 IPC 注册')
+    return
+  }
   console.log('[更新 IPC] 正在注册更新 IPC 处理器...')
 
   ipcMain.handle(

@@ -21,8 +21,8 @@ if (!app.isPackaged) {
 // second-instance 事件，由主实例负责显示窗口。
 if (!app.requestSingleInstanceLock()) {
   console.warn(
-    '[启动] 已有 Proma 进程持有单实例锁，本次启动将退出。\n' +
-      '  如果窗口未出现，可能旧进程已卡死。请运行 `killall Proma` 后重试。',
+    '[启动] 已有欧尼博平台进程持有单实例锁，本次启动将退出。\n' +
+      '  如果窗口未出现，可能旧进程已卡死。请运行 `killall 欧尼博平台` 后重试。',
   )
   app.quit()
 } else {
@@ -86,7 +86,7 @@ import { disposePiMcpConnections } from './lib/adapters/pi-mcp-tools'
 import { browserController } from './lib/browser-controller'
 import { markRunningDelegationsAsInterrupted } from './lib/agent-session-manager'
 import { stopAllGenerations } from './lib/chat-service'
-import { configureUpdater, initAutoUpdater, cleanupUpdater } from './lib/updater/auto-updater'
+import { configureUpdater, initAutoUpdater, cleanupUpdater, isUpdateFeedConfigured } from './lib/updater/auto-updater'
 import { startWorkspaceWatcher, stopWorkspaceWatcher } from './lib/workspace-watcher'
 import { startChatToolsWatcher, stopChatToolsWatcher } from './lib/chat-tools-watcher'
 import { getIsQuitting, setQuitting } from './lib/app-lifecycle'
@@ -536,7 +536,7 @@ function createWindow(): void {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;')
-    const page = `<!doctype html><html><head><meta charset="utf-8"><title>Proma 无法加载</title><style>body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:48px;color:#222;background:#fff}main{max-width:680px;margin:auto}h1{font-size:20px;font-weight:600}pre{white-space:pre-wrap;background:#f3f3f3;padding:16px;border-radius:8px}a{display:inline-block;margin-top:12px;padding:9px 14px;border-radius:6px;background:#222;color:#fff;text-decoration:none}</style></head><body><main><h1>Proma 无法加载主界面</h1><pre>${escapeHtml(reason)}</pre><a href="${escapeHtml(rendererEntryUrl)}">重新加载主界面</a></main></body></html>`
+    const page = `<!doctype html><html><head><meta charset="utf-8"><title>欧尼博平台无法加载</title><style>body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:48px;color:#222;background:#fff}main{max-width:680px;margin:auto}h1{font-size:20px;font-weight:600}pre{white-space:pre-wrap;background:#f3f3f3;padding:16px;border-radius:8px}a{display:inline-block;margin-top:12px;padding:9px 14px;border-radius:6px;background:#222;color:#fff;text-decoration:none}</style></head><body><main><h1>欧尼博平台无法加载主界面</h1><pre>${escapeHtml(reason)}</pre><a href="${escapeHtml(rendererEntryUrl)}">重新加载主界面</a></main></body></html>`
     mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(page)}`).catch((error) => {
       console.error('[启动] 降级错误页加载失败:', error)
       mainWindow?.show()
@@ -811,8 +811,9 @@ async function bootstrap(): Promise<void> {
   // 启动 Chat 工具配置文件监听（Agent 创建工具后自动通知渲染进程）
   safeRun('startChatToolsWatcher', startChatToolsWatcher)
 
-  // 自动更新仅在生产环境启用，并由主进程统一检测 Agent 是否空闲。
-  if (app.isPackaged && mainWindow) {
+  // 自动更新仅在生产环境且配置了更新源（app-update.yml）时启用，
+  // 并由主进程统一检测 Agent 是否空闲。企业内部分发未配置更新源时整体禁用。
+  if (app.isPackaged && isUpdateFeedConfigured() && mainWindow) {
     configureUpdater(mainWindow, { hasActiveAgents: hasActiveAgentSessions })
     safeRun('initAutoUpdater', () => initAutoUpdater(mainWindow!))
   }
@@ -909,11 +910,11 @@ function handleBootstrapFailure(err: unknown): void {
   try {
     const message = err instanceof Error ? (err.stack ?? err.message) : String(err)
     dialog.showErrorBox(
-      'Proma 启动遇到错误',
+      '欧尼博平台启动遇到错误',
       `部分功能可能不可用：\n\n${message}\n\n` +
         `日志位置：${app.getPath('logs')}\n\n` +
         `常见原因与排查：\n` +
-        `1. 旧版 Proma 进程未退出（终端运行 killall Proma 后重试）\n` +
+        `1. 旧版欧尼博平台进程未退出（终端运行 killall 欧尼博平台后重试）\n` +
         `2. ~/.proma/ 配置损坏（重命名 ~/.proma 后重启）\n` +
         `3. 系统 Keychain 无法解密保存的凭证（删除 ~/.proma/feishu.json 等后重新登录）\n\n` +
         `如需协助请到 GitHub Issues 反馈。`,

@@ -7,7 +7,7 @@
 
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { IPC_CHANNELS, CHANNEL_IPC_CHANNELS, CHAT_IPC_CHANNELS, AGENT_IPC_CHANNELS, ENVIRONMENT_IPC_CHANNELS, INSTALLER_IPC_CHANNELS, PROXY_IPC_CHANNELS, GITHUB_RELEASE_IPC_CHANNELS, SYSTEM_PROMPT_IPC_CHANNELS, CHAT_TOOL_IPC_CHANNELS, FEISHU_IPC_CHANNELS, DINGTALK_IPC_CHANNELS, SLACK_IPC_CHANNELS, WECHAT_IPC_CHANNELS, AUTOMATION_IPC_CHANNELS, PLANNING_IPC_CHANNELS, VAULT_IPC_CHANNELS, AGENT_ISLAND_IPC_CHANNELS, TERMINAL_IPC_CHANNELS } from '@proma/shared'
-import { USER_PROFILE_IPC_CHANNELS, SETTINGS_IPC_CHANNELS, SCRATCH_PAD_IPC_CHANNELS, APP_ICON_IPC_CHANNELS, DOCK_BADGE_IPC_CHANNELS, STORAGE_IPC_CHANNELS } from '../types'
+import { USER_PROFILE_IPC_CHANNELS, SETTINGS_IPC_CHANNELS, SCRATCH_PAD_IPC_CHANNELS, APP_ICON_IPC_CHANNELS, DOCK_BADGE_IPC_CHANNELS, STORAGE_IPC_CHANNELS, AUTH_IPC_CHANNELS } from '../types'
 import type {
   RuntimeStatus,
   GitRepoStatus,
@@ -175,6 +175,8 @@ import type {
 } from '@proma/shared'
 import type {
   UserProfile,
+  AuthLoginResult,
+  AuthGateStatus,
   AppSettings,
   QuickTaskSubmitInput,
   QuickTaskOpenSessionData,
@@ -439,6 +441,17 @@ export interface ElectronAPI {
 
   /** 提取附件文档的文本内容 */
   extractAttachmentText: (localPath: string) => Promise<string>
+
+  // ===== 登录门禁相关 =====
+
+  /** 登录（OAuth2 授权码 + PKCE，弹出 SSO 登录窗） */
+  authLogin: () => Promise<AuthLoginResult>
+
+  /** 获取登录门禁状态（启动校验） */
+  authGetState: () => Promise<AuthGateStatus>
+
+  /** 登出 */
+  authLogout: () => Promise<void>
 
   // ===== 用户档案相关 =====
 
@@ -1720,6 +1733,19 @@ const electronAPI: ElectronAPI = {
 
   updateUserProfile: (updates: Partial<UserProfile>) => {
     return ipcRenderer.invoke(USER_PROFILE_IPC_CHANNELS.UPDATE, updates)
+  },
+
+  // 登录门禁
+  authLogin: () => {
+    return ipcRenderer.invoke(AUTH_IPC_CHANNELS.LOGIN)
+  },
+
+  authGetState: () => {
+    return ipcRenderer.invoke(AUTH_IPC_CHANNELS.GET_STATE)
+  },
+
+  authLogout: () => {
+    return ipcRenderer.invoke(AUTH_IPC_CHANNELS.LOGOUT)
   },
 
   // 应用设置
